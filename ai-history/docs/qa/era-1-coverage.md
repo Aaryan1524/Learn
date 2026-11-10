@@ -1,5 +1,7 @@
 # Era 1 coverage review
 
+**Current status:** the expansion below was implemented after the original audit. The historical audit is preserved as a record; see the implementation closure at the end for current coverage.
+
 Reviewed against the user's proposed **The Birth of Artificial Intelligence (1943–1959)** outline on 2026-11-09. Source snapshot: `codex/reading-and-figures` at `1bafde8`, before the Ballet heading change. This is a coverage review, not a claim that the proposed curriculum has been implemented.
 
 ## Finding
@@ -78,3 +80,25 @@ This review inspected repository lesson content, metadata, figures, questions, m
 The proposed Rosenblatt source is [the 1958 Psychological Review paper, DOI 10.1037/h0042519](https://doi.org/10.1037/h0042519). Publisher access was blocked during this review, so no unseen paper text has been represented as reviewed. The proposed Novikoff paper was located at an [institutional scan](https://cs.uwaterloo.ca/~y328yu/classics/novikoff.pdf), but retrieval timed out. Verify its title and distinguish the symposium date from the proceedings publication date before publishing its bibliographic entry. In all cases it is a later mathematical reference relative to the proposed 1943–1959 era.
 
 The existing McCulloch–Pitts source review is still abstract-only. Avoid importing the original period's biological claims without checking the formal assumptions and evidence.
+
+## Implementation closure — 2026-11-09
+
+The learner path is now eight lessons with a 1943–1959 era label and an explicit 1936 prelude. Existing URLs remain stable. The first audit above describes the earlier five-lesson edition, not the current build.
+
+| Required area | Current implementation |
+| --- | --- |
+| Historical sequence | 1943 neuron context and assumptions; 1950 original imitation game; 1955 proposal/1956 workshop distinction; 1958 Rosenblatt, with the richer original framework separated from the teaching classifier. |
+| Symbolic / connectionist | Explicit representations, alarm-rule comparison, hand-chosen versus learned weights, coexistence and influence in the Dartmouth lesson. |
+| Neuron arithmetic | All scalar symbols defined, products → sum → bias → activation, b = −threshold derivation, varied numerical examples and exact-zero convention. |
+| AND / OR / alarm | Full four-row score/output tables, derivation of valid bias intervals, practical alarm mapping, and checked parameter-construction exercises. |
+| Learning | Error sign, input-specific weight increments, bias, learning rate, full worked update, repeated epochs, and separation assumptions for convergence. |
+| Python | Complete standard-language predictor/trainer; operation-by-operation explanation; downloadable reference; fixed-order five-epoch AND run; all four final scores and predictions; bounded XOR run. |
+| Geometry / XOR | Boundary derived by scalar algebra, orientation and bias shifts, vertical and constant cases, XOR truth table, shared-midpoint and algebraic contradictions, and a verified hidden-layer construction. |
+| Exercises | Eight conceptual and eight numeric/construction tasks with staged hints, worked solutions, targeted review links; self-assessed implementation and drawing/explanation variants. |
+| Papers | All five requested references linked with source companions. Novikoff is later than the era; direct scan review remains unavailable and the modern theorem statement is checked against Freund & Schapire (1999). |
+| Progress | Counts derive from eight lessons; old opened/completed/last lesson records survive migration. The expanded checkpoint starts unattempted. |
+| Visual preparation | 29 named spaces beside the explanations, with figure numbers, learning questions, captions, draft scenarios, and text alternatives. See visualizations.md. |
+
+**Still deferred:** actual images, neuron diagrams, Anatomy figures, sliders, moving 2D plots, step/run training controls, and linked live mathematical readouts. These spaces are not counted as working visualizations. This follows the author's latest instruction to build the visuals later.
+
+**Remaining release evidence:** independent beginner review, fresh desktop/phone visual and interaction QA, screen-reader testing, and the eventual figures' interaction/accessibility verification. The existing written mathematics and tested implementation support the requested outcomes, but the complete original interactive teaching gate is not claimed as passed. Part 2 production has not begun.

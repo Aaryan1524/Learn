@@ -31,3 +31,13 @@
 - Use the requested Ballet family (optical sizing auto, weight 400, normal style) for main page titles. Serve the optical-size variable font locally from the pinned Fontsource package; retain its full OFL notice. Metadata, body text, mathematical notation, and navigation keep their reading fonts.
 - Review the proposed 1943–1959 scope against the current five lessons in `docs/qa/era-1-coverage.md`. The new goal of independently training a perceptron is not met by the existing fixed-threshold lesson. Record the missing content explicitly rather than changing completion claims or dates.
 - Preserve the user's latest instruction to do Anatomy later. Existing frames remain reserved; this pass does not claim that sliders, live mathematical traces, or perceptron training figures exist.
+
+## 2026-11-09 — Era 1 curriculum expansion
+
+- Extend Foundations to 1943–1959, retaining computation (1936) as an explicitly labelled prelude and information theory as relevant context. Keep all five existing lesson URLs and append learning, Python implementation, and geometric separability/XOR lessons. Part 2 remains planned.
+- Derive bias and threshold decisions from scalar arithmetic, use the alarm rule and full AND/OR tables, and separate the historical McCulloch–Pitts/Rosenblatt models from our modern teaching simplifications.
+- Use one pure TypeScript perceptron model for authored tables and future controls. Keep a complete plain-Python reference download, exact five-pass AND trace, final four-case evaluation, and bounded XOR run. Tests compare the displayed code, download, and both implementations.
+- Add eight numeric/construction exercises alongside eight conceptual questions. The final checkpoint has 16 checked tasks plus a self-assessed Python implementation. Quiz completion is not mastery certification.
+- Increment content revision to foundations-2; retain the progress format and key because their shape is unchanged. Migrate opened/completed/last lesson from foundations-1 and reset its checkpoint attempt, since assessment scope changed. Derive every completion denominator from lesson metadata.
+- Reserve 29 concept-specific visual spaces, including arithmetic steps, learning updates, training traces, boundaries, and XOR. Each has stable IDs and a brief; the figure index follows reading order. Images, diagrams, Anatomy drawings, and live controls are deferred by the user.
+- Link primary papers rather than redistributing scans. Review the McCulloch–Pitts assumptions and Rosenblatt paper directly; state Novikoff as a later reference and use Freund & Schapire (1999) for the checked modern convergence statement while the original scan is unavailable.

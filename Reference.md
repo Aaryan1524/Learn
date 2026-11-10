@@ -8,6 +8,10 @@
 
 ## 1. How to use this document
 
+### Current Part 1 scope — author update, November 9, 2026
+
+The latest author instructions extend Era 1 to **The Birth of Artificial Intelligence (1943–1959)**, with the 1936 computation lesson retained as a prelude. The first edition now has eight lessons, ending with a plain-Python perceptron and linear separability/XOR. Twenty-nine named spaces reserve future images, diagrams, and Anatomy figures. Actual figure artwork and live figure controls are deferred by the author; text, calculations, practice, and the runnable Python reference remain available. These scope decisions supersede the earlier suggested Part 1 date range below. See `ai-history/docs/decisions.md` and `ai-history/docs/qa/era-1-coverage.md` for the implementation record and remaining acceptance evidence.
+
 Put this file at the root of the new repository as `Reference.md`. Read it before planning or implementing a part of the course. Its primary purpose is to preserve **how the course should teach**, and to make those teaching principles visible in the website.
 
 The nine-era curriculum below is a flexible editorial map. Suggested topics, papers, experiments, and visualizations are starting points. They are not a fixed script, a required lesson count, or an instruction to implement every example. Authors may split, combine, replace, or deepen lessons when doing so improves understanding. Record significant scope changes in `docs/decisions.md`.
