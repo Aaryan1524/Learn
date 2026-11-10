@@ -1,0 +1,10 @@
+{
+  "name": "learn-ai-history",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix ai-history run dev",
+    "build": "npm --prefix ai-history run build",
+    "typecheck": "npm --prefix ai-history run typecheck",
+    "test": "npm --prefix ai-history test"
+  }
+}
