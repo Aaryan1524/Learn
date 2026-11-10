@@ -2,6 +2,14 @@
 @import "@fontsource/eb-garamond/latin-400.css";
 @import "@fontsource/eb-garamond/latin-400-italic.css";
 
+@font-face {
+  font-family: "Ballet";
+  src: url("/fonts/ballet-latin-opsz-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- Tokens ---------- */
 :root {
   --bg: #fafafa;
@@ -17,6 +25,7 @@
   --shadow: 0 0 0 1px rgb(0 0 0 / 0.05), 0 1px 2px rgb(0 0 0 / 0.04), 0 2px 8px -2px rgb(0 0 0 / 0.06);
   --sans: "Inter Variable", system-ui, -apple-system, sans-serif;
   --serif: "EB Garamond", Georgia, serif;
+  --display: "Ballet", cursive;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --col: 640px;
   --canvas: 960px;
@@ -121,11 +130,21 @@ main > :not(.lesson-page):not(.home-page), .home-page > * { max-width: var(--col
 .crumbs a { color: var(--mute); text-decoration: none; }
 .crumbs a:hover { color: var(--ink); }
 .crumbs [aria-current] { color: var(--ink-2); }
-.title { font-size: 28px; line-height: 36px; letter-spacing: -.035em; font-weight: 550; }
-.title span { display: block; margin-top: 7px; font-size: 13px; line-height: 21px; color: var(--mute); font-weight: 420; letter-spacing: 0; }
-.home-page .title { font-size: 32px; line-height: 39px; }
+.title {
+  font-family: var(--display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  font-size: 58px;
+  line-height: 1.45;
+  letter-spacing: 0;
+  padding: .1em .12em .12em 0;
+}
+.title span { font-family: var(--sans); font-style: normal; display: block; margin-top: 7px; font-size: 13px; line-height: 21px; color: var(--mute); font-weight: 420; letter-spacing: 0; }
+.home-page .title { font-size: 64px; line-height: 1.4; }
 .home-page .statement { font-size: 19px; line-height: 29px; letter-spacing: -.02em; }
-.lesson-head .title { font-size: 30px; line-height: 38px; }
+.lesson-head .title { font-size: 56px; line-height: 1.45; }
 .lesson-head .statement { font-size: 18px; line-height: 28px; color: var(--ink-2); }
 .lesson-date { margin: 24px 0 10px; font-size: 12px; line-height: 20px; font-variant-numeric: tabular-nums; }
 .lesson-date > span { color: var(--mute); }
@@ -326,8 +345,8 @@ dialog::backdrop { background: var(--backdrop); }
 @media (min-width: 1120px) { .colophon { margin-left: 0; margin-right: 0; } }
 @media (max-width: 600px) {
   .frame { padding: 20px 20px 0; }
-  .title, .home-page .title { font-size: 25px; line-height: 32px; }
-  .lesson-head .title { font-size: 27px; line-height: 34px; }
+  .title, .home-page .title { font-size: 46px; line-height: 1.45; }
+  .lesson-head .title { font-size: 44px; line-height: 1.45; }
   .lesson-head .statement, .home-page .statement { font-size: 17px; line-height: 27px; }
   .lesson-toolbar { align-items: flex-start; flex-direction: column; gap: 12px; }
   .lesson-date { margin-top: 20px; }
