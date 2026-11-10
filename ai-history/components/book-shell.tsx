@@ -37,7 +37,7 @@ function Rail({ pathname, progress, active, theme, onTheme, onSearch }: { pathna
           const current = pathname === lessonPath(l.id);
           return <li key={l.id}>
             <Link href={lessonPath(l.id)} aria-current={current ? "page" : undefined}>{l.short}{progress.completed.includes(l.id) && <Check size={12} aria-label="Complete" />}</Link>
-            {current && <ul className="toc-sub" aria-label="On this page">{lessonSections.map(([id, label]) => <li key={id}><a href={`#${id}`} className={active === id ? "is-active" : ""}>{label}</a></li>)}</ul>}
+            {current && <ul className="toc-sub" aria-label="On this page">{lessonSections.map(([id, label]) => <li key={id}><a href={`#${id}`} className={active === id ? "is-active" : ""} aria-current={active === id ? "location" : undefined}>{label}</a></li>)}</ul>}
           </li>;
         })}
         <li><Link href="/eras/foundations/checkpoint" aria-current={here("/eras/foundations/checkpoint")}>Checkpoint{progress.checkpointAttempted && <Check size={12} aria-label="Attempted" />}</Link></li>
@@ -175,7 +175,7 @@ export function DepthSelector() {
   const [depth, setDepth] = useState("understand");
   useEffect(() => { try { const saved = localStorage.getItem("history-of-ai:depth"); if (["explore", "understand", "build"].includes(saved || "")) setDepth(saved!); } catch {} }, []);
   useEffect(() => { document.documentElement.dataset.depth = depth; window.dispatchEvent(new CustomEvent("reading-depth", { detail: depth })); }, [depth]);
-  return <div className="depth"><span id="depth-label">Depth</span><div className="seg" role="group" aria-labelledby="depth-label">{depths.map(([id, label, hint]) => <button key={id} title={hint} aria-pressed={depth === id} onClick={() => { setDepth(id); try { localStorage.setItem("history-of-ai:depth", id); } catch {} }}>{label}</button>)}</div></div>;
+  return <div className="depth"><span id="depth-label">Read</span><div className="seg" role="group" aria-labelledby="depth-label">{depths.map(([id, label, hint]) => <button key={id} title={hint} aria-pressed={depth === id} onClick={() => { setDepth(id); try { localStorage.setItem("history-of-ai:depth", id); } catch {} }}>{label}</button>)}</div></div>;
 }
 
 export function GuidedDetail({ title, kind = "math", children }: { title: string; kind?: "math" | "build"; children: ReactNode }) {

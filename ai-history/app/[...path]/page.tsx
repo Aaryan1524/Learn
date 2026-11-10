@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EraOverview, EraRows, LessonPage, Pager } from "@/components/editorial";
+import { EraOverview, EraRows, LessonPage, Pager, SourceEntry } from "@/components/editorial";
 import { ProgressPage } from "@/components/book-shell";
 import { Checkpoint, Question } from "@/components/learning";
 import { questions } from "@/lib/questions";
@@ -44,7 +44,7 @@ export default async function Page({ params, searchParams }: Props) {
     <p className="statement">Read what the authors claimed, how they argued, and what they left open.</p>
     <section>
       <h2>Part 1 sources</h2>
-      <ol className="rows">{sources.map(s => <li key={s.id} id={s.id} style={{ scrollMarginTop: 32 }}><a className="row" href={s.url} target="_blank" rel="noreferrer"><span className="row-n">↗</span><span className="row-t">{s.title}<span className="row-d">{s.author}</span><span className="row-d">{s.location} · {s.note}</span></span><span className="row-m">{s.year}</span></a></li>)}</ol>
+      <div className="source-library">{sources.map(source => <SourceEntry key={source.id} source={source} />)}</div>
       <p className="small" style={{ marginTop: 12 }}>Links go to original documents or institutional copies; publisher access varies. The McCulloch–Pitts summary is based on the abstract; full-text review is pending. Summaries reviewed 9 November 2026.</p>
     </section>
   </>;

@@ -6,8 +6,13 @@ import { Question } from "./learning";
 import { questions } from "@/lib/questions";
 import { LessonBody, Limitations } from "./lesson-content";
 
-export function FigureSlot({ number, title, description }: { number: string; title: string; description: string }) {
-  return <figure className="fig" id={`figure-${number}`} data-figure-slot={number}><div className="fig-stage">Figure {number} · {title} · coming soon</div><figcaption>{description}</figcaption></figure>;
+export function SourceEntry({ source }: { source: (typeof sources)[number] }) {
+  return <article className="source-entry" id={source.id}>
+    <p className="source-author">{source.author} <span>· {source.year}</span></p>
+    <a className="source-title" href={source.url} target="_blank" rel="noreferrer">{source.title}<ArrowUpRight size={14} aria-hidden="true" /></a>
+    <p className="source-location">{source.location}</p>
+    <p className="source-note">{source.note}</p>
+  </article>;
 }
 
 export function Pager({ back, on }: { back?: { href: string; label: string; small?: string }; on?: { href: string; label: string; small?: string } }) {
@@ -29,7 +34,7 @@ export function EraRows() {
 }
 
 export function HomePage() {
-  return <>
+  return <div className="home-page">
     <h1 className="title">A History of AI <span>· an open textbook</span></h1>
     <p className="statement">How we got from “what can a machine compute?” to today’s models, one idea at a time.</p>
     <ul className="meta">
@@ -52,7 +57,7 @@ export function HomePage() {
       <p className="muted">The dates overlap because the ideas do.</p>
       <EraRows />
     </section>
-  </>;
+  </div>;
 }
 
 export function EraOverview({ slug }: { slug: string }) {
@@ -108,14 +113,7 @@ const bridge: Record<LessonId, string> = {
   imitation: "A test turns an ambition into a procedure. A research community turns many of them into a field.",
   dartmouth: "The foundations give us precise pieces. Next comes representing and solving problems.",
 };
-const credit: Record<LessonId, string> = { computation: "Turing, 1936", logic: "McCulloch & Pitts, 1943", information: "Shannon, 1948", imitation: "Turing, 1950", dartmouth: "McCarthy et al., 1955" };
-const figureNote: Record<LessonId, string> = {
-  computation: "A tape-machine stepper will go here. The full text trace is above.",
-  logic: "A threshold-logic builder will go here. Every input case is in the table above.",
-  information: "An uncertainty experiment will go here. The worked probabilities are above.",
-  imitation: "An explorer for test design and interpretation will go here.",
-  dartmouth: "A map of the research threads that met at Dartmouth will go here.",
-};
+
 
 export function LessonPage({ id }: { id: LessonId }) {
   const lesson = lessons.find(l => l.id === id)!;
@@ -124,19 +122,20 @@ export function LessonPage({ id }: { id: LessonId }) {
   const prev = lessons[index - 1];
   const next = lessons[index + 1];
   return <div className="lesson-page">
-    <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1</Link><span>/</span><span aria-current="page">Lesson {lesson.number} of 05</span></nav>
-    <h1 className="title">{lesson.title} <span>· {lesson.year}</span></h1>
-    <p className="statement">{lesson.description}</p>
-    <ul className="meta"><li>{lesson.short}</li><li>{credit[id]}</li><li><Link href={`/prerequisites?return=${lessonPath(id)}`}>Notation refresher</Link></li></ul>
-    <ul className="steps" aria-label="You will learn to">{lesson.outcomes.map(x => <li key={x}>{x}</li>)}</ul>
-    <DepthSelector />
+    <header className="lesson-head">
+      <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1 · Foundations</Link><span>/</span><span aria-current="page">Lesson {lesson.number} of 05</span></nav>
+      <p className="lesson-date">{lesson.year} <span>— {lesson.short}</span></p>
+      <h1 className="title">{lesson.title}</h1>
+      <p className="statement">{lesson.description}</p>
+      <div className="lesson-setup"><p><span>You’ll learn to</span> {lesson.outcomes.map((x, i) => `${x[0].toLowerCase() + x.slice(1)}${i === lesson.outcomes.length - 1 ? "." : "; "}`).join("")}</p></div>
+      <div className="lesson-toolbar"><DepthSelector /><Link className="refresher-link" href={`/prerequisites?return=${lessonPath(id)}`}>Notation refresher ↗</Link></div>
+    </header>
     <LessonBody id={id} />
-    <section id="the-figure"><h2>Figure</h2><FigureSlot number={lesson.number} title={lesson.short} description={figureNote[id]} /></section>
     <section id="check-understanding"><h2>Check yourself</h2><Question question={questions[index]} /></section>
     <section id="where-it-fails"><h2>Limits</h2><Limitations id={id} /></section>
     <section id="original-source">
       <h2>Source</h2>
-      <ul className="rows"><li><a className="row" href={source.url} target="_blank" rel="noreferrer"><span className="row-n">↗</span><span className="row-t">{source.title}<span className="row-d">{source.author} · {source.location}</span></span><span className="row-m">{source.year}</span></a></li></ul>
+      <SourceEntry source={source} />
       <p className="small" style={{ marginTop: 12 }}>Reading prompt: {readingPrompt[id]}</p>
     </section>
     <div className="next-up"><p>{bridge[id]}</p><LessonControls id={id} /></div>

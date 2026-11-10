@@ -9,7 +9,7 @@ export const lessons = [
 ] as const;
 export type LessonId = typeof lessons[number]["id"];
 export const lessonSections = [
-  ["why-this-idea", "The idea"], ["worked-example", "Worked example"], ["the-figure", "Figure"], ["check-understanding", "Check yourself"], ["where-it-fails", "Limits"], ["original-source", "Source"],
+  ["why-this-idea", "The idea"], ["the-figure", "The mechanism"], ["worked-example", "Worked example"], ["check-understanding", "Check yourself"], ["where-it-fails", "Limits"], ["original-source", "Source"],
 ] as const;
 export const eras = [
   { number: "01", slug: "foundations", title: "Foundations", range: "1930s–1956", question: "What would it mean for a machine to think?", description: "Computation, logic, information, and the questions that started a field." },
