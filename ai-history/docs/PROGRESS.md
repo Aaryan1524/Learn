@@ -26,3 +26,11 @@
 - Numerical reading-time and browser performance claims are intentionally omitted; no measurements were fabricated.
 
 Part 1 is implemented as a reviewable first edition. It has not met the reference’s full final-era acceptance gate. Do not begin full Part 2 production until the remaining relevant evidence is resolved or the maintainer adjusts that scope.
+
+## Reading and future-figure pass — codex/reading-and-figures
+
+Implemented a 640px prose measure inside a wider canvas, stronger title/body hierarchy, shorter lesson setup, contextual notes, bibliographic sources, explicit active navigation markers, and eight reserved figure stages. The main mechanism now appears between motivation and the worked example. Existing lesson section anchors, reading depths, practice, and progress are retained.
+
+New verification: all eight Node tests passed, including brief/reference integrity; type checking passed. Sixteen HTTP checks passed for redesigned pages and the intended 404, with unique IDs, valid same-page links, correct figure counts, and the intended reading order. The production build completed successfully.
+
+Browser access returned unavailable. Native browser access was attempted, but the user was actively changing the browser and the action was rejected; no unrelated page was changed. Fresh desktop/phone screenshots, reflow, theme appearance, and browser interaction checks remain unverified for this pass. The previous redesign's browser evidence does not validate these new layout changes. Independent learner and screen-reader review remain pending. Figure art and controls are deferred by the user.

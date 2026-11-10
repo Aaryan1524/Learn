@@ -4,6 +4,7 @@ import { binaryEntropy, tapeStep, threshold, type TapeState } from "../lib/model
 import { emptyProgress, parseProgress } from "../lib/progress.ts";
 import { eras, lessons, sources } from "../lib/course.ts";
 import { questions } from "../lib/questions.ts";
+import { figures, primaryFigures } from "../lib/figures.ts";
 
 test("tape execution preserves the input and exposes the separate halt transition", () => {
   const input: TapeState = { tape: "101", head: 0, halted: false, steps: 0 };
@@ -43,4 +44,15 @@ test("published lessons and exercises reference real, unique content", () => {
   assert.equal(questions.length, lessons.length);
   for (const lesson of lessons) assert.ok(sources.some(s => s.id === lesson.source));
   for (const q of questions) { assert.ok(lessons.some(l => l.id === q.review)); assert.equal(q.options.length, q.explanations.length); assert.ok(q.answer >= 0 && q.answer < q.options.length); assert.ok(q.hints.length >= 2); }
+});
+
+test("future figure briefs have distinct identifiers, valid lessons, and text equivalents", () => {
+  const briefs = Object.values(figures);
+  assert.equal(new Set(briefs.map(f => f.id)).size, briefs.length);
+  assert.equal(new Set(briefs.map(f => f.number)).size, briefs.length);
+  for (const f of briefs) {
+    assert.ok(lessons.some(l => l.id === f.lesson));
+    assert.ok(f.question && f.alternative && f.subject && f.scenarios.length);
+  }
+  for (const lesson of lessons) assert.equal(figures[primaryFigures[lesson.id]].lesson, lesson.id);
 });

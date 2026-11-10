@@ -17,3 +17,11 @@
 - Chrome copy was cut hard (kickers, standfirsts, margin notes, closing note). Lesson prose and its accuracy hedges are unchanged; lesson-content.tsx is restyled through CSS only.
 - Switch DM Sans to Inter (variable) so the 450/550 weights exist. Dark theme is original; the reference has none. Quiz correctness uses an icon and text, not colour alone.
 - The new stylesheet is written from scratch with its own class names; no Anatomy CSS was copied.
+
+## 2026-11-09 — Reading and future figures, branch codex/reading-and-figures
+
+- Build from `redesign` on a separate branch; preserve its monochrome identity, Inter/EB Garamond pairing, course navigation, and learning behavior.
+- Separate prose measure (640px maximum) from figure width (the larger available content canvas). Reading remains comfortable while later mechanisms have room. Notes use the right margin only where it fits; otherwise they stay inline.
+- Give titles, section headings, body, and metadata distinct sizes. Replace the repeated ruled outcomes with a compact learning summary, and group reading depth with prerequisite access.
+- Place eight named figure briefs near the reasoning: a primary mechanism per lesson and a companion in the first three technical lessons. Artwork is explicitly deferred. Follow Anatomy’s framing and object-selection guidance when each is built.
+- Use bibliographic source entries rather than navigation rows, visible active navigation markers, and subdued but readable secondary text. No new animation or image dependency.

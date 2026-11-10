@@ -27,7 +27,8 @@ npm run build
 - `lib/course.ts`: lesson, era, source, and glossary metadata.
 - `components/lesson-content.tsx`: server-rendered lesson explanations.
 - `lib/questions.ts`: questions, hints, solutions, and feedback.
-- `components/editorial.tsx`: homepage, overview, lesson layout, and reserved figure frames.
+- `components/editorial.tsx`: homepage, overview, lesson layout, and bibliographic sources.
+- `components/figure-slot.tsx` and `lib/figures.ts`: eight future figure frames and their learning briefs.
 - `components/book-shell.tsx`: navigation, search, theme, reading depth, and progress.
 - `lib/models.ts`: pure teaching models, separate from the view.
 - `app/book.css`: semantic theme tokens, typography, and responsive layout.
