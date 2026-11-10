@@ -1,0 +1,22 @@
+name: Report a confusing explanation
+description: Help make a lesson clearer or correct a factual error.
+title: "Lesson: "
+body:
+  - type: input
+    id: lesson
+    attributes:
+      label: Lesson or section URL
+    validations:
+      required: true
+  - type: textarea
+    id: confusion
+    attributes:
+      label: Where did the explanation stop making sense?
+      description: Include the symbol, sentence, or step you were trying to follow.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Suggested clarification or evidence
+      description: Optional. For factual corrections, include a source and section.
