@@ -1,31 +1,148 @@
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, Compass, Plus } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { eras, lessonPath, lessons, sources, type LessonId } from "@/lib/course";
 import { ContinueLink, DepthSelector, LessonControls } from "./book-shell";
 import { Question } from "./learning";
 import { questions } from "@/lib/questions";
 import { LessonBody, Limitations } from "./lesson-content";
 
-export function FigureSlot({ number, title, description, large = false }: { number: string; title: string; description: string; large?: boolean }) {
-  return <figure className={`figure-slot ${large ? "figure-large" : ""}`} id={`figure-${number}`} data-figure-slot={number}><div className="figure-corners"><span>FIG. {number}</span><span>{title}</span></div><div className="figure-reserved"><span className="figure-cross" aria-hidden="true"><Plus size={24} strokeWidth={1} /></span><p>A little space for understanding.</p><span>INTERACTIVE VISUALIZATION TO COME</span></div><figcaption><span className="figure-dot" />{description}<span className="reserved-label">SPACE RESERVED</span></figcaption></figure>;
+export function FigureSlot({ number, title, description }: { number: string; title: string; description: string }) {
+  return <figure className="fig" id={`figure-${number}`} data-figure-slot={number}><div className="fig-stage">Figure {number} · {title} · coming soon</div><figcaption>{description}</figcaption></figure>;
+}
+
+export function Pager({ back, on }: { back?: { href: string; label: string; small?: string }; on?: { href: string; label: string; small?: string } }) {
+  return <nav className="pager" aria-label="Pagination">
+    {back && <Link href={back.href}><small>{back.small || "Previous"}</small><strong>← {back.label}</strong></Link>}
+    {on && <Link href={on.href} className="on"><small>{on.small || "Next"}</small><strong>{on.label} →</strong></Link>}
+  </nav>;
+}
+
+export function LessonRows() {
+  return <ol className="rows">
+    {lessons.map(l => <li key={l.id}><Link className="row" href={lessonPath(l.id)}><span className="row-n">{l.number}</span><span className="row-t">{l.title}<span className="row-d">{l.short}</span></span><span className="row-m">{l.year}</span></Link></li>)}
+    <li><Link className="row" href="/eras/foundations/checkpoint"><span className="row-n">✓</span><span className="row-t">Checkpoint<span className="row-d">Five questions across the part</span></span><span className="row-m">Quiz</span></Link></li>
+  </ol>;
+}
+
+export function EraRows() {
+  return <ol className="rows">{eras.map((e, i) => <li key={e.slug}><Link className={`row ${i ? "is-planned" : ""}`} href={`/eras/${e.slug}`}><span className="row-n">{e.number}</span><span className="row-t">{e.title}<span className="row-d">{e.question}</span></span><span className="row-m">{i ? e.range : "Live"}</span></Link></li>)}</ol>;
 }
 
 export function HomePage() {
-  return <div className="home-page"><div className="page-topline"><span>AN OPEN, INTERACTIVE TEXTBOOK</span><span className="edition"><span /> PART ONE IS HERE</span></div><section className="hero"><h1>Every idea has<br />a <em>beginning.</em></h1><p className="hero-description">A history of artificial intelligence.<br />From the first question to the next frontier.</p><p className="hero-note">Understand the ideas. Work through the math.<br />Follow the thread that connects it all.</p><div className="hero-actions"><ContinueLink /><Link className="quiet-link" href="#the-journey">Explore the journey <ArrowDown size={14} /></Link></div><div className="hero-meta"><span>FREE & OPEN TO EVERYONE</span><span className="meta-divider" /><span>NO BACKGROUND IN AI NEEDED</span></div><div className="hero-margin-note"><span>01 — 09</span><div /><span>A FIELD IN<br />THE MAKING</span></div></section><div className="editorial-rule"><span>A STORY TOLD THROUGH IDEAS</span><span>1930s — TODAY</span></div><section className="opening-note" id="the-approach"><span className="margin-number">00</span><p>AI didn’t arrive all at once. It grew from a series of questions: <em>What can a machine compute? Can rules become reasoning? Can experience become knowledge?</em></p><p>This is a place to slow down and understand the answers. One idea, one worked example, one connection at a time.</p><aside className="small-margin-note">A living textbook.<br />Built one part at a time.</aside></section><section id="beginning" className="home-foundations"><div className="section-topline"><span className="eyebrow">START AT THE BEGINNING</span><span className="status-label"><span /> AVAILABLE NOW</span></div><Link href="/eras/foundations" className="part-feature-title"><div><span className="part-feature-number">01</span><h2>The foundations<br /><em>of a thinking machine.</em></h2></div><ArrowUpRight size={25} strokeWidth={1.2} /></Link><p>Before neural networks. Before the name “artificial intelligence.”<br className="desktop-break" /> Five ideas that made a new field possible.</p><div className="part-feature-footer"><span>1930s–1956 <i>·</i> 5 lessons <i>·</i> Self-paced</span><Link href="/eras/foundations">Open Part 1 <ArrowRight size={14} /></Link></div></section><FigureSlot number="01" title="Computation, made visible" description="A tape, a set of rules, and a machine taking its first step." large /><section id="the-journey" className="journey-section"><div className="section-heading"><span className="margin-number">01</span><p className="eyebrow">THE LONG VIEW</p><h2>Nine parts.<br /><em>One connected story.</em></h2><p>The dates overlap because the ideas do, too. These are paths through a field, rather than a tidy line of inventions.</p></div><div className="journey-list">{eras.map((era, i) => <Link href={`/eras/${era.slug}`} className={i === 0 ? "published-era" : ""} key={era.slug}><span className="journey-number">{era.number}</span><div><h3>{era.title}</h3><p>{era.question}</p></div><span className="era-range">{era.range}</span><span className="era-status">{i === 0 ? "Begin here" : "Planned"}</span><ArrowUpRight size={15} /></Link>)}</div></section><section className="closing-note"><span className="brand-symbol" aria-hidden="true">✳</span><h2>Good questions deserve<br /><em>patient explanations.</em></h2><p>You don’t need to know where this story ends.<br />You just need somewhere to begin.</p><ContinueLink className="text-cta" /></section></div>;
+  return <>
+    <h1 className="title">A History of AI <span>· an open textbook</span></h1>
+    <p className="statement">How we got from “what can a machine compute?” to today’s models, one idea at a time.</p>
+    <ul className="meta">
+      <li>Part 1 of 9 is live</li>
+      <li>5 lessons</li>
+      <li>Free, no account</li>
+      <li><Link href="/prerequisites">Arithmetic is enough</Link></li>
+    </ul>
+    <div className="lede">
+      <p>AI didn’t arrive all at once. It grew out of questions. <em>What can a machine compute? Can rules become reasoning? Can experience become knowledge?</em></p>
+      <p>Each lesson takes one idea, works a small example by hand, checks your understanding, and links the original paper.</p>
+    </div>
+    <div className="actions"><ContinueLink /><Link className="text-btn" href="/eras/foundations">Part 1 overview</Link></div>
+    <section id="beginning">
+      <h2>Start here: Foundations, 1930s–1956</h2>
+      <LessonRows />
+    </section>
+    <section id="the-journey">
+      <h2>The nine parts</h2>
+      <p className="muted">The dates overlap because the ideas do.</p>
+      <EraRows />
+    </section>
+  </>;
 }
 
 export function EraOverview({ slug }: { slug: string }) {
-  const era = eras.find(e => e.slug === slug)!;
-  if (slug !== "foundations") return <><p className="page-kicker">THE JOURNEY · PART {era.number}</p><p className="planned-badge">PLANNED CHAPTER</p><h1>{era.title}<em>.</em></h1><p className="standfirst">{era.question}</p><div className="editorial-rule"><span>{era.range}</span><span>IN THE MAKING</span></div><section><h2>The thread we’ll follow</h2><p>{era.description}</p><p>This part is on the roadmap. Its lessons are not published yet. We’re building the foundations first, with the same attention to the reasoning, worked examples, and original evidence that later ideas deserve.</p><Link href="/eras/foundations" className="primary-button">Explore Part 1 <ArrowRight size={15} /></Link></section><Link href="/eras" className="quiet-link">← Back to all nine parts</Link></>;
-  return <><div className="page-topline"><Link href="/">THE COURSE</Link><span>PART 01 / 09</span></div><header className="chapter-header"><p className="page-kicker">PART ONE · 1930s–1956</p><h1>The foundations<br />of a <em>thinking machine.</em></h1><p className="standfirst">What can a machine compute, and how could we study intelligence scientifically?</p><div className="chapter-meta"><span>5 lessons</span><span>Self-paced</span><span>Concepts → worked examples → practice</span></div></header><section className="overview-intro"><h2>Start before the name.</h2><p>Before there was a field called artificial intelligence, researchers were asking what it means to follow a rule, represent a decision, or measure uncertainty. We’ll build these ideas carefully, then see why they made machine intelligence a question people could investigate.</p><div className="outcomes"><span className="eyebrow">BY THE END, YOU’LL BE ABLE TO</span><ul><li>Trace a computation and identify its complete state.</li><li>Build a logical decision from a small weighted sum.</li><li>Calculate information in a simple probability model.</li><li>Separate a behavioral test from a universal claim about intelligence.</li><li>Read a research proposal as a proposal, with ambitions and assumptions.</li></ul></div><p className="prerequisite-note">Bring curiosity and ordinary arithmetic. We’ll introduce the notation as we go. <Link href="/prerequisites">A small notation guide ↗</Link></p></section><div className="section-heading compact"><p className="eyebrow">THE READING PATH</p><h2>Five ideas to begin with.</h2></div><div className="lesson-list">{lessons.map(l => <Link href={lessonPath(l.id)} key={l.id}><span>{l.number}</span><div><small>{l.year}</small><h3>{l.title}</h3><p>{l.description}</p></div><ArrowUpRight size={20} /></Link>)}</div><Link href="/eras/foundations/checkpoint" className="checkpoint-link"><Compass size={22} strokeWidth={1.3} /><div><h3>Connect the ideas</h3><p>A short checkpoint, with hints and worked answers.</p></div><ArrowRight size={18} /></Link><FigureSlot number="01" title="A machine, one step at a time" description="The future tape-machine figure will live here. The worked trace is already in lesson one." /><ContinueLink /></>;
+  const index = eras.findIndex(e => e.slug === slug);
+  const era = eras[index];
+  const prev = eras[index - 1];
+  const next = eras[index + 1];
+  if (slug !== "foundations") return <>
+    <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras">All parts</Link><span>/</span><span aria-current="page">Part {era.number}</span></nav>
+    <h1 className="title">{era.title} <span>· Part {Number(era.number)}, {era.range}</span></h1>
+    <p className="statement">{era.question}</p>
+    <ul className="meta"><li>Planned</li><li>Not written yet</li></ul>
+    <div className="lede"><p>{era.description}</p><p className="muted">This part is on the roadmap. Part 1 is the place to start.</p></div>
+    <div className="actions"><Link className="btn" href="/eras/foundations">Go to Part 1</Link></div>
+    <Pager back={{ href: `/eras/${prev.slug}`, label: prev.title }} on={next && { href: `/eras/${next.slug}`, label: next.title }} />
+  </>;
+  return <>
+    <nav className="crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><span aria-current="page">Part 1</span></nav>
+    <h1 className="title">Foundations <span>· Part 1, 1930s–1956</span></h1>
+    <p className="statement">What can a machine compute, and how could anyone study intelligence scientifically?</p>
+    <ul className="meta"><li>5 lessons</li><li>Self-paced</li><li><Link href="/prerequisites">Notation refresher</Link></li></ul>
+    <div className="lede"><p>Before AI had a name, people were asking what it means to follow a rule, represent a decision, or measure uncertainty. These five lessons build those ideas, then show how they made machine intelligence something you could investigate.</p></div>
+    <div className="actions"><ContinueLink /></div>
+    <section id="lessons">
+      <h2>Lessons</h2>
+      <LessonRows />
+    </section>
+    <section id="outcomes">
+      <h2>By the end you can</h2>
+      <ul className="steps">
+        <li>Trace a computation and name its complete state.</li>
+        <li>Build a logical decision from a weighted sum.</li>
+        <li>Calculate information in a simple probability model.</li>
+        <li>Separate a behavioral test from a claim about intelligence.</li>
+        <li>Read a research proposal as a proposal.</li>
+      </ul>
+    </section>
+    <Pager back={{ href: "/", label: "Home" }} on={{ href: lessonPath("computation"), label: lessons[0].short, small: "Lesson 01" }} />
+  </>;
 }
 
-const lessonContents = [
-  ["why-this-idea", "Why this idea"], ["worked-example", "Work through an example"], ["the-figure", "A space to explore"], ["check-understanding", "Check your understanding"], ["where-it-fails", "Where it stops"], ["original-source", "Read the original"],
-];
+const readingPrompt: Record<LessonId, string> = {
+  computation: "Find the tape, scanned symbol, and machine configuration in §§1–2. How does our toy machine simplify the formal model?",
+  logic: "Which biological features does the formal model simplify? Read the abstract and separate a model from a physiological claim.",
+  information: "Read the introduction and §6. Which problem does the measure answer, and which question about meaning does it leave aside?",
+  imitation: "Compare the original setup in §1 with today’s shorthand for the Turing test. What changes in the telling?",
+  dartmouth: "Find one conjecture, one proposed task, and one result the document does not yet establish.",
+};
+const bridge: Record<LessonId, string> = {
+  computation: "A machine needs a state and rules. What if those rules represented a logical decision?",
+  logic: "We can calculate with yes and no. Next: how much does a yes or no tell us?",
+  information: "We can measure uncertainty. Measuring intelligent behavior needs a different kind of definition.",
+  imitation: "A test turns an ambition into a procedure. A research community turns many of them into a field.",
+  dartmouth: "The foundations give us precise pieces. Next comes representing and solving problems.",
+};
+const credit: Record<LessonId, string> = { computation: "Turing, 1936", logic: "McCulloch & Pitts, 1943", information: "Shannon, 1948", imitation: "Turing, 1950", dartmouth: "McCarthy et al., 1955" };
+const figureNote: Record<LessonId, string> = {
+  computation: "A tape-machine stepper will go here. The full text trace is above.",
+  logic: "A threshold-logic builder will go here. Every input case is in the table above.",
+  information: "An uncertainty experiment will go here. The worked probabilities are above.",
+  imitation: "An explorer for test design and interpretation will go here.",
+  dartmouth: "A map of the research threads that met at Dartmouth will go here.",
+};
+
 export function LessonPage({ id }: { id: LessonId }) {
   const lesson = lessons.find(l => l.id === id)!;
   const index = lessons.findIndex(l => l.id === id);
   const source = sources.find(s => s.id === lesson.source)!;
-  return <div className="lesson-page"><div className="page-topline"><Link href="/eras/foundations">PART 01 · FOUNDATIONS</Link><span>LESSON {lesson.number} / 05</span></div><header className="lesson-header"><p className="page-kicker">{lesson.year} · THE IDEA</p><h1>{lesson.title}<em>.</em></h1><p className="standfirst">{lesson.description}</p><div className="lesson-goals"><span className="eyebrow">IN THIS LESSON</span><ul>{lesson.outcomes.map(x => <li key={x}>{x}</li>)}</ul></div><p className="prerequisite-note">Prerequisites: ordinary arithmetic. <Link href={`/prerequisites?return=${lessonPath(id)}`}>Review the notation ↗</Link></p></header><DepthSelector /><nav className="on-this-page" aria-label="On this page"><span className="eyebrow">ON THIS PAGE</span>{lessonContents.map(([anchor, label], i) => <a href={`#${anchor}`} key={anchor}><span>0{i + 1}</span>{label}</a>)}</nav><div className="lesson-prose"><LessonBody id={id} /><section id="the-figure"><FigureSlot number={lesson.number} title={lesson.short} description={id === "computation" ? "Reserved for a tape-machine stepper. Use the complete text trace above for now." : id === "logic" ? "Reserved for a threshold-logic construction. Every input case is in the table above." : id === "information" ? "Reserved for an uncertainty experiment. The worked probabilities remain readable above." : id === "imitation" ? "Reserved for an exploration of test design, observations, and interpretations." : "Reserved for a map of the research threads that converged at Dartmouth."} /></section><section id="check-understanding"><p className="section-label">04 / RETRIEVE THE IDEA</p><h2>Make the idea your own.</h2><Question question={questions[index]} /></section><section id="where-it-fails"><p className="section-label">05 / KEEP THE LIMITS IN VIEW</p><h2>Where this explanation stops.</h2><Limitations id={id} /></section><section id="original-source"><p className="section-label">06 / BACK TO THE EVIDENCE</p><h2>Read the original.</h2><a className="paper-card" href={source.url} target="_blank" rel="noreferrer"><span className="paper-year">{source.year}</span><div><small>{source.author}</small><h3>{source.title}</h3><p>{source.location}</p><span>{source.note}</span></div><ArrowUpRight size={18} /></a><p className="body-small">Reading prompt: {id === "dartmouth" ? "Identify one conjecture, one proposed task, and one result that the document does not yet establish." : id === "imitation" ? "Compare the original setup in §1 with today’s shorthand for the Turing test. What changes in the telling?" : id === "logic" ? "Which biological features does the formal model simplify? Read the abstract and distinguish a model from a physiological claim." : id === "information" ? "Read the introduction and §6. Which problem does the mathematical quantity answer, and which question about meaning does it leave aside?" : "Find the tape, scanned symbol, and machine configuration in §§1–2. How does our toy machine simplify the formal model?"}</p></section><div className="lesson-completion"><div><h3>One more idea to carry forward.</h3><p>{id === "computation" ? "A machine needs a state and rules. What if those rules represented a logical decision?" : id === "logic" ? "We can calculate with yes and no. Now let’s ask how much a yes or no tells us." : id === "information" ? "We can measure uncertainty. But measuring intelligent behavior requires a different kind of definition." : id === "imitation" ? "A test turns an ambition into a procedure. A research community turns many such ambitions into a field." : "The foundations give us precise pieces. Next comes the challenge of representing and solving problems."}</p></div><LessonControls id={id} /></div><nav className="lesson-pagination" aria-label="Adjacent lessons"><Link href={index === 0 ? "/eras/foundations" : lessonPath(lessons[index - 1].id)}><span>← PREVIOUS</span><strong>{index === 0 ? "Part 1 overview" : lessons[index - 1].short}</strong></Link><Link href={index === lessons.length - 1 ? "/eras/foundations/checkpoint" : lessonPath(lessons[index + 1].id)}><span>NEXT →</span><strong>{index === lessons.length - 1 ? "Connect the ideas" : lessons[index + 1].short}</strong></Link></nav><p className="report-link">Something didn’t click? <a href={`https://github.com/Aaryan1524/Learn/issues/new?template=confusion.yml&title=${encodeURIComponent(`Lesson: ${lesson.title}`)}`} target="_blank" rel="noreferrer">Report a confusing explanation ↗</a></p></div></div>;
+  const prev = lessons[index - 1];
+  const next = lessons[index + 1];
+  return <div className="lesson-page">
+    <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1</Link><span>/</span><span aria-current="page">Lesson {lesson.number} of 05</span></nav>
+    <h1 className="title">{lesson.title} <span>· {lesson.year}</span></h1>
+    <p className="statement">{lesson.description}</p>
+    <ul className="meta"><li>{lesson.short}</li><li>{credit[id]}</li><li><Link href={`/prerequisites?return=${lessonPath(id)}`}>Notation refresher</Link></li></ul>
+    <ul className="steps" aria-label="You will learn to">{lesson.outcomes.map(x => <li key={x}>{x}</li>)}</ul>
+    <DepthSelector />
+    <LessonBody id={id} />
+    <section id="the-figure"><h2>Figure</h2><FigureSlot number={lesson.number} title={lesson.short} description={figureNote[id]} /></section>
+    <section id="check-understanding"><h2>Check yourself</h2><Question question={questions[index]} /></section>
+    <section id="where-it-fails"><h2>Limits</h2><Limitations id={id} /></section>
+    <section id="original-source">
+      <h2>Source</h2>
+      <ul className="rows"><li><a className="row" href={source.url} target="_blank" rel="noreferrer"><span className="row-n">↗</span><span className="row-t">{source.title}<span className="row-d">{source.author} · {source.location}</span></span><span className="row-m">{source.year}</span></a></li></ul>
+      <p className="small" style={{ marginTop: 12 }}>Reading prompt: {readingPrompt[id]}</p>
+    </section>
+    <div className="next-up"><p>{bridge[id]}</p><LessonControls id={id} /></div>
+    <Pager
+      back={prev ? { href: lessonPath(prev.id), label: prev.short } : { href: "/eras/foundations", label: "Part 1 overview" }}
+      on={next ? { href: lessonPath(next.id), label: next.short } : { href: "/eras/foundations/checkpoint", label: "Checkpoint" }} />
+    <p className="small" style={{ marginTop: 20 }}>Something didn’t click? <a href={`https://github.com/Aaryan1524/Learn/issues/new?template=confusion.yml&title=${encodeURIComponent(`Lesson: ${lesson.title}`)}`} target="_blank" rel="noreferrer">Tell me <ArrowUpRight size={11} style={{ verticalAlign: "-1px" }} /></a></p>
+  </div>;
 }

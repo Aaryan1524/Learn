@@ -8,6 +8,9 @@ export const lessons = [
   { id: "dartmouth", number: "05", title: "A field gets its name", short: "The Dartmouth proposal", year: "1955–56", description: "An ambitious research proposal brings several threads under one name.", outcomes: ["Distinguish a proposal from demonstrated results", "Recognize overlapping research traditions", "Connect the foundations to symbolic problem solving"], source: "dartmouth" },
 ] as const;
 export type LessonId = typeof lessons[number]["id"];
+export const lessonSections = [
+  ["why-this-idea", "The idea"], ["worked-example", "Worked example"], ["the-figure", "Figure"], ["check-understanding", "Check yourself"], ["where-it-fails", "Limits"], ["original-source", "Source"],
+] as const;
 export const eras = [
   { number: "01", slug: "foundations", title: "Foundations", range: "1930s–1956", question: "What would it mean for a machine to think?", description: "Computation, logic, information, and the questions that started a field." },
   { number: "02", slug: "symbolic-ai", title: "Symbolic AI", range: "1956–1980s", question: "Can intelligence be written as rules?", description: "Search, knowledge, and the challenge of representing the world." },

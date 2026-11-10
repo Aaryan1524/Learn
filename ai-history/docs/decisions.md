@@ -8,3 +8,12 @@
 - Use original toy models, tested separately from presentation. No arbitrary code execution, accounts, analytics, or external grader.
 - Keep the existing repository MIT license for original code and lesson content. Third-party fonts retain their package licenses. Link primary papers rather than redistributing them.
 - Use browser-native MathML with prose equivalents for the small initial equations. This avoids a math runtime and keeps notation available without JavaScript.
+
+## 2026-11-09 — Redesign toward Anatomy's plain, consistent layout
+
+- Replace the warm-paper, rust-accent editorial look with a grayscale system: one 14px Inter body, EB Garamond only for `em`, pull quotes and italic section numbers, hairline rules, and a 560px reading column with a sticky left rail.
+- Every page uses one pattern: breadcrumb, a small bold title with a muted subtitle, one statement line, a meta row, then numbered sections with rules. Lists are thin-ruled rows. Pages end with a previous/next pager and a one-line colophon.
+- Navigation lives in the rail on desktop (site links, Part 1 lessons, the current lesson's sections with scroll-spy, Parts 2–9 as one "planned" link, then search/theme/progress). Below 1120px it becomes a top bar with Search and Contents.
+- Chrome copy was cut hard (kickers, standfirsts, margin notes, closing note). Lesson prose and its accuracy hedges are unchanged; lesson-content.tsx is restyled through CSS only.
+- Switch DM Sans to Inter (variable) so the 450/550 weights exist. Dark theme is original; the reference has none. Quiz correctness uses an icon and text, not colour alone.
+- The new stylesheet is written from scratch with its own class names; no Anatomy CSS was copied.

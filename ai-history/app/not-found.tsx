@@ -1,2 +1,2 @@
 import Link from "next/link";
-export default function NotFound() { return <><p className="page-kicker">404 · A SMALL DETOUR</p><h1>This page is<br /><em>still unwritten.</em></h1><p className="standfirst">The idea you’re looking for may have moved, or may not be published yet.</p><Link className="primary-button" href="/">Return to the beginning →</Link></>; }
+export default function NotFound() { return <><h1 className="title">Not found <span>· 404</span></h1><p className="statement">This page has moved, or isn’t written yet.</p><div className="actions"><Link className="btn" href="/">Go home</Link><Link className="text-btn" href="/eras/foundations">Part 1</Link></div></>; }

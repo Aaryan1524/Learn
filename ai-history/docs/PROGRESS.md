@@ -2,7 +2,7 @@
 
 ## Implemented
 
-- Anatomy-inspired editorial layout: warm paper, serif/sans typography, rust accent, persistent course rail, mobile navigation drawer, dark/light/system theme, visible focus, and reduced-motion support.
+- Anatomy-inspired plain layout (see decisions.md, redesign): grayscale tokens, Inter + EB Garamond, sticky rail with per-lesson section index, top bar and Contents drawer on small screens, dark/light/system theme, visible focus, and reduced-motion support.
 - Homepage, overview, five foundation lessons, checkpoint, eight planned-era overviews, reading room, glossary, notation bridge, about, progress, and 404 page.
 - Worked tape trace, threshold truth tables and XOR argument, finite entropy examples, toy evaluation protocol, and proposal/source analysis.
 - Per-option misconception feedback, staged hints, worked answers, outcome-level checkpoint feedback, and optional self-reflection.
@@ -19,7 +19,7 @@
 
 ## Remaining release evidence
 
-- Browser host returned unavailable. Desktop/mobile screenshots, reflow, live focus behavior, theme appearance, storage-denied behavior, quiz browser interaction, and screen-reader verification are unverified. No claim of WCAG conformance.
+- Redesign checked in a headless browser: desktop (1440) and mobile (390) layouts, dark theme, quiz feedback, no console errors, no horizontal overflow. Live focus behavior, storage-denied behavior, and screen-reader verification are still unverified. No claim of WCAG conformance.
 - Independent learner review has not occurred.
 - McCulloch–Pitts publisher abstract reviewed; full primary article review remains pending.
 - Final interactive visualizations are deferred by the user, not counted as complete.

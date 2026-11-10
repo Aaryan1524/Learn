@@ -3,19 +3,57 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown, CircleHelp, Download, Menu, Moon, Search, Settings2, Sun, Upload, X } from "lucide-react";
-import { eras, glossary, lessonPath, lessons, sources } from "@/lib/course";
+import { ArrowRight, Check, Download, Search, Upload, X } from "lucide-react";
+import { glossary, lessonPath, lessonSections, lessons, sources } from "@/lib/course";
 import { emptyProgress, parseProgress, PROGRESS_KEY, type Progress } from "@/lib/progress";
 
 type CourseContext = { progress: Progress; update: (f: (p: Progress) => Progress) => void; storageAvailable: boolean };
 const Course = createContext<CourseContext>({ progress: emptyProgress(), update: () => {}, storageAvailable: true });
 export const useCourse = () => useContext(Course);
+
 const searchEntries = [
-  ...lessons.map(l => ({ title: l.title, category: `PART 01 · LESSON ${l.number}`, description: l.description, href: lessonPath(l.id) })),
-  ...glossary.map(([title, description]) => ({ title, category: "GLOSSARY", description, href: `/glossary#${title.toLowerCase().replaceAll(" ", "-")}` })),
-  ...sources.map(s => ({ title: s.title, category: `ORIGINAL PAPER · ${s.year}`, description: s.author, href: `/papers#${s.id}` })),
-  { title: "Reading the notation", category: "PREREQUISITE", description: "Binary values, functions, sums, logarithms, and probability.", href: "/prerequisites" },
+  ...lessons.map(l => ({ title: l.title, category: `Lesson ${l.number} · ${l.year}`, description: l.description, href: lessonPath(l.id) })),
+  ...glossary.map(([title, description]) => ({ title, category: "Glossary", description, href: `/glossary#${title.toLowerCase().replaceAll(" ", "-")}` })),
+  ...sources.map(s => ({ title: s.title, category: `Paper · ${s.year}`, description: s.author, href: `/papers#${s.id}` })),
+  { title: "Reading the notation", category: "Refresher", description: "Binary values, functions, sums, logarithms, and probability.", href: "/prerequisites" },
 ];
+
+function Rail({ pathname, progress, active, theme, onTheme, onSearch }: { pathname: string; progress: Progress; active: string; theme: string; onTheme: () => void; onSearch: () => void }) {
+  const here = (href: string) => (pathname === href ? "page" : undefined);
+  return <div className="rail-body">
+    <Link href="/" className="brand">A History of AI</Link>
+    <nav aria-label="Site">
+      <ul className="nav-list">
+        <li><Link href="/" aria-current={here("/")}>Home</Link></li>
+        <li><Link href="/papers" aria-current={here("/papers")}>Papers</Link></li>
+        <li><Link href="/glossary" aria-current={here("/glossary")}>Glossary</Link></li>
+        <li><Link href="/about" aria-current={here("/about")}>About</Link></li>
+      </ul>
+    </nav>
+    <nav aria-label="Part 1 lessons">
+      <Link href="/eras/foundations" className="rail-label">Part 1 · Foundations</Link>
+      <ol className="nav-list">
+        {lessons.map(l => {
+          const current = pathname === lessonPath(l.id);
+          return <li key={l.id}>
+            <Link href={lessonPath(l.id)} aria-current={current ? "page" : undefined}>{l.short}{progress.completed.includes(l.id) && <Check size={12} aria-label="Complete" />}</Link>
+            {current && <ul className="toc-sub" aria-label="On this page">{lessonSections.map(([id, label]) => <li key={id}><a href={`#${id}`} className={active === id ? "is-active" : ""}>{label}</a></li>)}</ul>}
+          </li>;
+        })}
+        <li><Link href="/eras/foundations/checkpoint" aria-current={here("/eras/foundations/checkpoint")}>Checkpoint{progress.checkpointAttempted && <Check size={12} aria-label="Attempted" />}</Link></li>
+      </ol>
+    </nav>
+    <ul className="nav-list">
+      <li><Link href="/eras" aria-current={pathname === "/eras" || (pathname.startsWith("/eras/") && !pathname.startsWith("/eras/foundations")) ? "page" : undefined}>Parts 2–9 <span>planned</span></Link></li>
+    </ul>
+    <div className="rail-tools">
+      <button onClick={onSearch}>Search <kbd>⌘K</kbd></button>
+      <button onClick={onTheme} aria-label={`Theme: ${theme}. Change theme`}>Theme <span>{theme}</span></button>
+      <Link href="/progress" aria-current={here("/progress")}>Progress <span>{progress.completed.length}/5</span></Link>
+      <span className="meter" aria-hidden="true"><span style={{ width: `${progress.completed.length * 20}%` }} /></span>
+    </div>
+  </div>;
+}
 
 export function BookShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -24,6 +62,7 @@ export function BookShell({ children }: { children: ReactNode }) {
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [theme, setTheme] = useState("system");
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState("");
   const searchDialog = useRef<HTMLDialogElement>(null);
   const menuDialog = useRef<HTMLDialogElement>(null);
 
@@ -59,57 +98,84 @@ export function BookShell({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", shortcut);
     return () => window.removeEventListener("keydown", shortcut);
   }, []);
+  // Highlight the lesson section currently being read.
+  useEffect(() => {
+    setActive("");
+    if (!lessons.some(l => pathname === lessonPath(l.id))) return;
+    const targets = lessonSections.map(([id]) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (visible) setActive(visible.target.id);
+    }, { rootMargin: "-15% 0px -70% 0px" });
+    targets.forEach(t => observer.observe(t));
+    return () => observer.disconnect();
+  }, [pathname]);
+
   const cycleTheme = () => {
     const next = theme === "system" ? "light" : theme === "light" ? "dark" : "system";
     setTheme(next); try { localStorage.setItem("history-of-ai:theme", next); } catch {}
   };
-  const results = searchEntries.filter(r => `${r.title} ${r.description}`.toLowerCase().includes(query.toLowerCase().trim())).slice(0, query ? 12 : 5);
-  const sidebar = <>
-    <Link href="/" className={`sidebar-home ${pathname === "/" ? "selected" : ""}`}><BookOpen size={15} /> The introduction <ArrowUpRight size={13} /></Link>
-    <p className="nav-eyebrow">THE JOURNEY <span>9 PARTS</span></p>
-    <nav aria-label="Course chapters" className="course-navigation">
-      {eras.map((era, i) => <div key={era.slug} className={`era-nav ${i === 0 ? "is-published" : ""}`}>
-        <Link className={`era-link ${pathname.startsWith(`/eras/${era.slug}`) ? "active-era" : ""}`} href={`/eras/${era.slug}`}><span className="era-number">{era.number}</span><span>{era.title}</span>{i === 0 ? <ChevronDown size={12} /> : <span className="planned-dot" aria-label="Planned" />}</Link>
-        {i === 0 && <div className="lesson-navigation">
-          <Link href="/eras/foundations" className={pathname === "/eras/foundations" ? "active" : ""}>Overview</Link>
-          {lessons.map(l => <Link key={l.id} className={pathname === lessonPath(l.id) ? "active" : ""} href={lessonPath(l.id)}>{l.short}{progress.completed.includes(l.id) && <Check size={12} aria-label="Complete" />}</Link>)}
-          <Link href="/eras/foundations/checkpoint" className={pathname.endsWith("checkpoint") ? "active" : ""}>The checkpoint {progress.checkpointAttempted && <Check size={12} aria-label="Attempted" />}</Link>
-        </div>}
-      </div>)}
-    </nav>
-    <div className="sidebar-resources"><Link href="/glossary">Glossary <ArrowUpRight size={12} /></Link><Link href="/papers">The reading room <ArrowUpRight size={12} /></Link><Link href="/about">About this project <ArrowUpRight size={12} /></Link></div>
-    <Link href="/progress" className="sidebar-progress"><div><span>Your journey</span><span>{progress.completed.length} / 5</span></div><span className="progress-track"><span style={{ width: `${progress.completed.length * 20}%` }} /></span><small>Saved on this device <ArrowUpRight size={11} /></small></Link>
-  </>;
+  const openSearch = () => { menuDialog.current?.close(); searchDialog.current?.showModal(); };
+  const q = query.toLowerCase().trim();
+  const results = searchEntries.filter(r => `${r.title} ${r.description}`.toLowerCase().includes(q)).slice(0, q ? 12 : 5);
+  const rail = <Rail pathname={pathname} progress={progress} active={active} theme={theme} onTheme={cycleTheme} onSearch={openSearch} />;
+
   return <Course.Provider value={{ progress, update, storageAvailable }}>
     <a className="skip-link" href="#main-content">Skip to content</a>
-    <header className="site-header">
-      <Link className="wordmark" href="/" aria-label="A History of AI home"><span className="brand-symbol" aria-hidden="true">✳</span><span>A History of <i>AI</i><small>IDEAS THAT MADE INTELLIGENCE</small></span></Link>
-      <nav className="header-links" aria-label="Main navigation"><Link className={pathname === "/" || pathname.startsWith("/eras") ? "current" : ""} href="/">The course</Link><Link className={pathname === "/papers" ? "current" : ""} href="/papers">Reading room</Link><Link className={pathname === "/about" ? "current" : ""} href="/about">About</Link></nav>
-      <div className="header-actions"><button className="search-trigger" onClick={() => searchDialog.current?.showModal()}><Search size={15} /><span>Find an idea</span><kbd>⌘ K</kbd></button><span className="header-divider" /><button className="icon-button theme-button" onClick={cycleTheme} aria-label={`Theme: ${theme}. Switch to ${theme === "system" ? "light" : theme === "light" ? "dark" : "system"}`} title={`Theme: ${theme}`}>{theme === "dark" ? <Moon size={17} /> : theme === "system" ? <Settings2 size={17} /> : <Sun size={17} />}</button><button className="icon-button mobile-menu" onClick={() => menuDialog.current?.showModal()} aria-label="Open course navigation"><Menu size={20} /></button></div>
-    </header>
-    <div className="site-layout"><aside className="desktop-sidebar">{sidebar}</aside><div className="reading-surface"><main id="main-content" tabIndex={-1}>{children}</main><footer className="site-footer"><Link href="/">A History of AI <span>·</span> An open learning project by Aaryan.</Link><a href="https://github.com/Aaryan1524/Learn" target="_blank" rel="noreferrer">Made to be shared <ArrowUpRight size={12} /></a></footer></div></div>
-    <dialog ref={searchDialog} className="search-dialog" onClick={e => { if (e.target === e.currentTarget) searchDialog.current?.close(); }} aria-label="Search the course"><div className="search-input-row"><Search size={20} /><input aria-label="Search lessons, terms, and papers" placeholder="What are you curious about?" value={query} onChange={e => setQuery(e.target.value)} /><button className="icon-button" onClick={() => searchDialog.current?.close()} aria-label="Close search"><X size={18} /></button></div><div className="search-results"><p className="eyebrow">{query ? `${results.length} RESULTS` : "START EXPLORING"}</p>{results.length ? results.map(r => <Link href={r.href} key={r.href + r.title} onClick={() => searchDialog.current?.close()}><small>{r.category}</small><strong>{r.title}</strong><p>{r.description}</p><ArrowUpRight size={16} /></Link>) : <div className="no-results"><p>No published idea matches “{query}”.</p><span>Try “state”, “logic”, “probability”, or “Turing”.</span></div>}</div><div className="search-footer">Lessons, definitions & original papers <kbd>esc to close</kbd></div></dialog>
-    <dialog ref={menuDialog} className="menu-dialog" onClick={e => { if ((e.target as Element).closest("a")) menuDialog.current?.close(); }} aria-label="Course navigation"><div className="mobile-menu-title"><span>Explore the course</span><button className="icon-button" onClick={() => menuDialog.current?.close()} aria-label="Close navigation"><X size={20} /></button></div>{sidebar}</dialog>
-    <noscript><div className="noscript-note">Reading works without JavaScript. Search, quizzes, theme, and progress need JavaScript. <a href="/eras">View all parts</a> · <a href="/eras/foundations">Part 1 lessons</a></div></noscript>
+    <div className="frame">
+      <aside className="rail" aria-label="Course navigation">{rail}</aside>
+      <div className="read">
+        <header className="topbar">
+          <Link href="/" className="brand">A History of AI</Link>
+          <div className="topbar-actions">
+            <button onClick={openSearch}>Search</button>
+            <button onClick={() => menuDialog.current?.showModal()} aria-label="Open course navigation">Contents</button>
+          </div>
+        </header>
+        <main id="main-content" tabIndex={-1}>{children}</main>
+        <footer className="colophon">
+          <span>A History of AI · an open project by Aaryan</span>
+          <a href="https://github.com/Aaryan1524/Learn" target="_blank" rel="noreferrer">Source on GitHub</a>
+        </footer>
+      </div>
+    </div>
+    <dialog ref={searchDialog} aria-label="Search the course" onClick={e => { if (e.target === e.currentTarget) searchDialog.current?.close(); }}>
+      <div className="search-row">
+        <Search size={15} />
+        <input aria-label="Search lessons, terms, and papers" placeholder="Search lessons, terms, papers" value={query} onChange={e => setQuery(e.target.value)} />
+        <button onClick={() => searchDialog.current?.close()} aria-label="Close search"><X size={16} /></button>
+      </div>
+      <div className="search-list">
+        {results.length ? results.map(r => <Link className="search-hit" href={r.href} key={r.href + r.title} onClick={() => searchDialog.current?.close()}><small>{r.category}</small>{r.title}</Link>)
+          : <p className="search-empty">Nothing matches “{query}”. Try “state”, “logic” or “Turing”.</p>}
+      </div>
+    </dialog>
+    <dialog ref={menuDialog} className="menu-dialog" aria-label="Course navigation" onClick={e => { if (e.target === e.currentTarget || (e.target as Element).closest("a")) menuDialog.current?.close(); }}>
+      <button className="menu-close" onClick={() => menuDialog.current?.close()} aria-label="Close navigation">Close</button>
+      {rail}
+    </dialog>
+    <noscript><div className="noscript-note">Reading works without JavaScript; search, quizzes, theme and progress need it. <a href="/eras/foundations">Part 1 lessons</a></div></noscript>
   </Course.Provider>;
 }
 
-export function ContinueLink({ className = "primary-button" }: { className?: string }) {
+export function ContinueLink({ className = "btn" }: { className?: string }) {
   const { progress } = useCourse();
-  return <Link className={className} href={lessonPath(progress.lastLesson || "computation")}>{progress.lastLesson ? "Continue your reading" : "Begin with Part 1"}<ArrowRight size={16} /></Link>;
+  const last = lessons.find(l => l.id === progress.lastLesson);
+  return <Link className={className} href={lessonPath(last?.id || "computation")}>{last ? `Continue: ${last.short}` : "Start Part 1"}<ArrowRight className="go" size={14} /></Link>;
 }
 
 export function LessonControls({ id }: { id: string }) {
   const { progress, update } = useCourse();
   const complete = progress.completed.includes(id);
-  return <button className={`complete-button ${complete ? "is-complete" : ""}`} aria-pressed={complete} onClick={() => update(p => ({ ...p, completed: complete ? p.completed.filter(x => x !== id) : [...p.completed, id] }))}>{complete ? <Check size={16} /> : <span className="empty-circle" />}{complete ? "Marked as complete" : "Mark lesson complete"}</button>;
+  return <button className="btn btn-quiet" aria-pressed={complete} onClick={() => update(p => ({ ...p, completed: complete ? p.completed.filter(x => x !== id) : [...p.completed, id] }))}>{complete && <Check size={14} />}{complete ? "Completed" : "Mark complete"}</button>;
 }
 
+const depths = [["explore", "Explore", "Core ideas only. Worked detail stays collapsed."], ["understand", "Understand", "Ideas, worked examples and practice."], ["build", "Build", "Everything, plus code to run."]] as const;
 export function DepthSelector() {
   const [depth, setDepth] = useState("understand");
   useEffect(() => { try { const saved = localStorage.getItem("history-of-ai:depth"); if (["explore", "understand", "build"].includes(saved || "")) setDepth(saved!); } catch {} }, []);
   useEffect(() => { document.documentElement.dataset.depth = depth; window.dispatchEvent(new CustomEvent("reading-depth", { detail: depth })); }, [depth]);
-  return <div className="depth-control"><span>YOUR READING DEPTH</span><div role="group" aria-label="Reading depth">{[["explore", "Explore"], ["understand", "Understand"], ["build", "Build"]].map(([id, label]) => <button key={id} aria-pressed={depth === id} className={depth === id ? "selected" : ""} onClick={() => { setDepth(id); try { localStorage.setItem("history-of-ai:depth", id); } catch {} }}>{label}</button>)}</div><p>{depth === "explore" ? "The core ideas. Worked detail stays available below." : depth === "build" ? "The full explanation, plus code and investigation." : "The ideas, worked examples, and guided practice."}</p></div>;
+  return <div className="depth"><span id="depth-label">Depth</span><div className="seg" role="group" aria-labelledby="depth-label">{depths.map(([id, label, hint]) => <button key={id} title={hint} aria-pressed={depth === id} onClick={() => { setDepth(id); try { localStorage.setItem("history-of-ai:depth", id); } catch {} }}>{label}</button>)}</div></div>;
 }
 
 export function GuidedDetail({ title, kind = "math", children }: { title: string; kind?: "math" | "build"; children: ReactNode }) {
@@ -120,7 +186,7 @@ export function GuidedDetail({ title, kind = "math", children }: { title: string
     window.addEventListener("reading-depth", receive);
     return () => window.removeEventListener("reading-depth", receive);
   }, [kind]);
-  return <details className={`detail-panel ${kind}-detail`} open={open} onToggle={e => setOpen(e.currentTarget.open)}><summary>{title}<span>{kind === "build" ? "BUILD & INVESTIGATE" : "STEP BY STEP"}</span></summary>{children}</details>;
+  return <details className={`detail-panel ${kind}-detail`} open={open} onToggle={e => setOpen(e.currentTarget.open)}><summary>{title}<span>{kind === "build" ? "Code" : "Step by step"}</span></summary>{children}</details>;
 }
 
 export function ProgressPage() {
@@ -131,7 +197,24 @@ export function ProgressPage() {
   const exportProgress = () => {
     const url = URL.createObjectURL(new Blob([JSON.stringify(progress, null, 2)], { type: "application/json" }));
     const a = document.createElement("a"); a.href = url; a.download = "my-ai-history-progress.json"; a.click(); URL.revokeObjectURL(url);
-    setMessage("Progress exported. Keep this file to continue on another device.");
+    setMessage("Exported. Import this file to continue on another device.");
   };
-  return <><p className="page-kicker">YOUR LEARNING NOTEBOOK</p><h1>Your journey.</h1><p className="standfirst">There is no finish-line timer. Your progress belongs to you, and stays on your device.</p>{!storageAvailable && <p className="notice">Persistent storage is unavailable or an old progress record could not be read. You can still read and export your current progress.</p>}<div className="progress-summary"><strong>{progress.completed.length}<span> / 5</span></strong><p>lessons marked complete</p></div><div className="progress-list">{lessons.map(l => <div key={l.id}><Link href={lessonPath(l.id)}><span>{l.number}</span>{l.title}</Link><small>{progress.completed.includes(l.id) ? "Complete" : progress.opened.includes(l.id) ? "Opened" : "Not opened"}</small></div>)}</div><p className="body-small">Checkpoint: {progress.checkpointAttempted ? "attempted" : "not attempted"}. Completion is self-reported; opening a page does not mark it complete.</p><div className="button-row"><button className="secondary-button" onClick={exportProgress}><Download size={15} />Export progress</button><button className="secondary-button" onClick={() => importRef.current?.click()}><Upload size={15} />Import progress</button><button className="text-button" onClick={() => setConfirmReset(true)}>Reset progress</button></div><input ref={importRef} type="file" accept="application/json,.json" hidden aria-label="Import a progress file" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; try { if (file.size > 100_000) throw new Error("Choose a progress file smaller than 100 KB."); const incoming = parseProgress(JSON.parse(await file.text())); update(() => incoming); setMessage("Progress imported successfully."); } catch (err) { setMessage(err instanceof Error ? err.message : "That file could not be read."); } e.target.value = ""; }} /><p role="status" className="feedback-message">{message}</p>{confirmReset && <div className="reset-confirm"><p>Clear the learning record on this device? Export it first if you want a backup.</p><button className="secondary-button" onClick={() => { update(() => emptyProgress()); setConfirmReset(false); setMessage("Your progress has been reset."); }}>Clear progress</button><button className="text-button" onClick={() => setConfirmReset(false)}>Keep my progress</button></div>}</>;
+  return <>
+    <h1 className="title">Progress <span>· saved on this device</span></h1>
+    <p className="statement">{progress.completed.length} of 5 lessons complete. Checkpoint {progress.checkpointAttempted ? "attempted" : "not attempted"}.</p>
+    {!storageAvailable && <p className="notice">Storage is unavailable, or an old record couldn’t be read. You can still export what’s here.</p>}
+    <section>
+      <h2>Lessons</h2>
+      <ol className="rows">{lessons.map(l => <li key={l.id}><Link className="row" href={lessonPath(l.id)}><span className="row-n">{l.number}</span><span className="row-t">{l.short}</span><span className="row-m">{progress.completed.includes(l.id) ? "Complete" : progress.opened.includes(l.id) ? "Opened" : "—"}</span></Link></li>)}</ol>
+      <p className="small" style={{ marginTop: 12 }}>You mark lessons complete yourself. Nothing is uploaded.</p>
+      <div className="actions">
+        <button className="btn btn-quiet" onClick={exportProgress}><Download size={14} />Export</button>
+        <button className="btn btn-quiet" onClick={() => importRef.current?.click()}><Upload size={14} />Import</button>
+        <button className="text-btn" onClick={() => setConfirmReset(true)}>Reset</button>
+      </div>
+      <input ref={importRef} type="file" accept="application/json,.json" hidden aria-label="Import a progress file" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; try { if (file.size > 100_000) throw new Error("Choose a progress file smaller than 100 KB."); const incoming = parseProgress(JSON.parse(await file.text())); update(() => incoming); setMessage("Progress imported."); } catch (err) { setMessage(err instanceof Error ? err.message : "That file could not be read."); } e.target.value = ""; }} />
+      <p role="status" className="small" style={{ marginTop: 12 }}>{message}</p>
+      {confirmReset && <div className="notice"><p>Clear progress on this device? Export first if you want a backup.</p><div className="actions" style={{ marginTop: 8 }}><button className="btn" onClick={() => { update(() => emptyProgress()); setConfirmReset(false); setMessage("Progress reset."); }}>Clear progress</button><button className="text-btn" onClick={() => setConfirmReset(false)}>Cancel</button></div></div>}
+    </section>
+  </>;
 }
