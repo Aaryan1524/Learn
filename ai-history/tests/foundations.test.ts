@@ -39,7 +39,8 @@ test("malformed and incompatible progress imports are rejected", () => {
   for (const raw of [null, {}, { ...emptyProgress(), version: 2 }, { ...emptyProgress(), revision: "old" }, { ...emptyProgress(), completed: ["fake"] }, { ...emptyProgress(), opened: "all" }, { ...emptyProgress(), checkpointAttempted: "yes" }, { ...emptyProgress(), lastLesson: "fake" }]) assert.throws(() => parseProgress(raw));
 });
 test("published lessons and exercises reference real, unique content", () => {
-  assert.equal(new Set(lessons.map(l => l.id)).size, 5);
+  assert.equal(new Set(lessons.map(l => l.id)).size, 8);
+  assert.deepEqual(lessons.slice(-3).map(l => l.id), ["perceptron", "build-perceptron", "decision-boundaries"]);
   assert.equal(new Set(eras.map(e => e.slug)).size, 9);
   assert.equal(questions.length, lessons.length);
   for (const lesson of lessons) assert.ok(sources.some(s => s.id === lesson.source));

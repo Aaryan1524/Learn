@@ -3,6 +3,10 @@ import { ArrowUpRight } from "lucide-react";
 import { eras, lessonPath, lessons, sources, type LessonId } from "@/lib/course";
 import { ContinueLink, DepthSelector, LessonControls } from "./book-shell";
 import { Question } from "./learning";
+import { NumericExercise } from "./numeric-exercise";
+import { numericTasks } from "@/lib/exercises";
+import { figures } from "@/lib/figures";
+import { SourceCompanion } from "./source-companion";
 import { questions } from "@/lib/questions";
 import { LessonBody, Limitations } from "./lesson-content";
 
@@ -24,8 +28,8 @@ export function Pager({ back, on }: { back?: { href: string; label: string; smal
 
 export function LessonRows() {
   return <ol className="rows">
-    {lessons.map(l => <li key={l.id}><Link className="row" href={lessonPath(l.id)}><span className="row-n">{l.number}</span><span className="row-t">{l.title}<span className="row-d">{l.short}</span></span><span className="row-m">{l.year}</span></Link></li>)}
-    <li><Link className="row" href="/eras/foundations/checkpoint"><span className="row-n">✓</span><span className="row-t">Checkpoint<span className="row-d">Five questions across the part</span></span><span className="row-m">Quiz</span></Link></li>
+    {lessons.map(l => <li key={l.id}><Link className="row" href={lessonPath(l.id)}><span className="row-n">{l.number}</span><span className="row-t">{l.title}<span className="row-d">{l.id === "computation" ? "Prelude · " : ""}{l.short}</span></span><span className="row-m">{l.year}</span></Link></li>)}
+    <li><Link className="row" href="/eras/foundations/checkpoint"><span className="row-n">✓</span><span className="row-t">Checkpoint<span className="row-d">Reasoning, calculations, and implementation practice</span></span><span className="row-m">Quiz</span></Link></li>
   </ol>;
 }
 
@@ -39,7 +43,7 @@ export function HomePage() {
     <p className="statement">How we got from “what can a machine compute?” to today’s models, one idea at a time.</p>
     <ul className="meta">
       <li>Part 1 of 9 is live</li>
-      <li>5 lessons</li>
+      <li>{lessons.length} lessons, including a prelude</li>
       <li>Free, no account</li>
       <li><Link href="/prerequisites">Arithmetic is enough</Link></li>
     </ul>
@@ -49,7 +53,7 @@ export function HomePage() {
     </div>
     <div className="actions"><ContinueLink /><Link className="text-btn" href="/eras/foundations">Part 1 overview</Link></div>
     <section id="beginning">
-      <h2>Start here: Foundations, 1930s–1956</h2>
+      <h2>Start here: Foundations, 1943–1959</h2>
       <LessonRows />
     </section>
     <section id="the-journey">
@@ -76,10 +80,10 @@ export function EraOverview({ slug }: { slug: string }) {
   </>;
   return <>
     <nav className="crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><span aria-current="page">Part 1</span></nav>
-    <h1 className="title">Foundations <span>· Part 1, 1930s–1956</span></h1>
-    <p className="statement">What can a machine compute, and how could anyone study intelligence scientifically?</p>
-    <ul className="meta"><li>5 lessons</li><li>Self-paced</li><li><Link href="/prerequisites">Notation refresher</Link></li></ul>
-    <div className="lede"><p>Before AI had a name, people were asking what it means to follow a rule, represent a decision, or measure uncertainty. These five lessons build those ideas, then show how they made machine intelligence something you could investigate.</p></div>
+    <h1 className="title">Foundations <span>· Part 1, 1943–1959</span></h1>
+    <p className="statement">How did AI begin—and how can a machine learn a decision from examples?</p>
+    <ul className="meta"><li>{lessons.length} lessons, including a prelude</li><li>Self-paced</li><li><Link href="/prerequisites">Notation refresher</Link></li></ul>
+    <div className="lede"><p>Before AI had a name, people were asking what it means to follow a rule, represent a decision, or measure uncertainty. This path begins with a 1936 computation prelude, then follows the birth of AI through 1943–1959. You will move from fixed logical decisions to a working perceptron that learns from examples.</p></div>
     <div className="actions"><ContinueLink /></div>
     <section id="lessons">
       <h2>Lessons</h2>
@@ -92,7 +96,7 @@ export function EraOverview({ slug }: { slug: string }) {
         <li>Build a logical decision from a weighted sum.</li>
         <li>Calculate information in a simple probability model.</li>
         <li>Separate a behavioral test from a claim about intelligence.</li>
-        <li>Read a research proposal as a proposal.</li>
+        <li>Read a research proposal as a proposal.</li><li>Compare symbolic and connectionist representations.</li><li>Derive the bias-form neuron equation and compute weight updates.</li><li>Implement and train a plain-Python perceptron on AND.</li><li>Interpret a linear decision boundary and explain why XOR needs a different representation.</li>
       </ul>
     </section>
     <Pager back={{ href: "/", label: "Home" }} on={{ href: lessonPath("computation"), label: lessons[0].short, small: "Lesson 01" }} />
@@ -101,17 +105,23 @@ export function EraOverview({ slug }: { slug: string }) {
 
 const readingPrompt: Record<LessonId, string> = {
   computation: "Find the tape, scanned symbol, and machine configuration in §§1–2. How does our toy machine simplify the formal model?",
-  logic: "Which biological features does the formal model simplify? Read the abstract and separate a model from a physiological claim.",
+  logic: "Read the introduction and five formal assumptions. Which neural features are idealized, and how does our weighted teaching unit differ?",
   information: "Read the introduction and §6. Which problem does the measure answer, and which question about meaning does it leave aside?",
   imitation: "Compare the original setup in §1 with today’s shorthand for the Turing test. What changes in the telling?",
   dartmouth: "Find one conjecture, one proposed task, and one result the document does not yet establish.",
+  perceptron: "Compare the paper’s association/response architecture and reinforcement discussion with our small two-input classifier. Which features have we deliberately simplified?",
+  "build-perceptron": "Separate the research model in the 1958 paper from our modern reference implementation and its truth-table experiment.",
+  "decision-boundaries": "Treat convergence as a later mathematical result. State its assumptions before applying it to a dataset.",
 };
 const bridge: Record<LessonId, string> = {
   computation: "A machine needs a state and rules. What if those rules represented a logical decision?",
   logic: "We can calculate with yes and no. Next: how much does a yes or no tell us?",
   information: "We can measure uncertainty. Measuring intelligent behavior needs a different kind of definition.",
   imitation: "A test turns an ambition into a procedure. A research community turns many of them into a field.",
-  dartmouth: "The foundations give us precise pieces. Next comes representing and solving problems.",
+  dartmouth: "The field has a name and competing representations. Next, examples will start changing a model’s parameters.",
+  perceptron: "The update rule is only arithmetic. Now turn it into a complete training program and test every case.",
+  "build-perceptron": "Your program learned AND. Why does the same learning loop fail on XOR? Look at the geometry of its decisions.",
+  "decision-boundaries": "You can now distinguish a representation’s limits from a training failure. Use the checkpoint to connect the historical and technical ideas.",
 };
 
 
@@ -123,19 +133,20 @@ export function LessonPage({ id }: { id: LessonId }) {
   const next = lessons[index + 1];
   return <div className="lesson-page">
     <header className="lesson-head">
-      <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1 · Foundations</Link><span>/</span><span aria-current="page">Lesson {lesson.number} of 05</span></nav>
+      <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1 · Foundations</Link><span>/</span><span aria-current="page">Lesson {lesson.number} of {String(lessons.length).padStart(2, "0")}</span></nav>
       <p className="lesson-date">{lesson.year} <span>— {lesson.short}</span></p>
       <h1 className="title">{lesson.title}</h1>
       <p className="statement">{lesson.description}</p>
       <div className="lesson-setup"><p><span>You’ll learn to</span> {lesson.outcomes.map((x, i) => `${x[0].toLowerCase() + x.slice(1)}${i === lesson.outcomes.length - 1 ? "." : "; "}`).join("")}</p></div>
       <div className="lesson-toolbar"><DepthSelector /><Link className="refresher-link" href={`/prerequisites?return=${lessonPath(id)}`}>Notation refresher ↗</Link></div>
     </header>
+    <nav className="figure-index" aria-label="Visual spaces in this lesson"><span>Visual guide · spaces reserved for later</span><ul>{Object.values(figures).filter(f => f.lesson === id).sort((a, b) => a.number.localeCompare(b.number)).map(f => <li key={f.id}><a href={`#figure-${f.id}`}>Fig. {f.number} · {f.title}</a></li>)}</ul></nav>
     <LessonBody id={id} />
-    <section id="check-understanding"><h2>Check yourself</h2><Question question={questions[index]} /></section>
+    <section id="check-understanding"><h2>Check yourself</h2><Question question={questions[index]} />{numericTasks.filter(t => t.lesson === id).map(task => <NumericExercise task={task} key={task.id} />)}</section>
     <section id="where-it-fails"><h2>Limits</h2><Limitations id={id} /></section>
     <section id="original-source">
       <h2>Source</h2>
-      <SourceEntry source={source} />
+      <SourceEntry source={source} /><SourceCompanion id={source.id} />
       <p className="small" style={{ marginTop: 12 }}>Reading prompt: {readingPrompt[id]}</p>
     </section>
     <div className="next-up"><p>{bridge[id]}</p><LessonControls id={id} /></div>

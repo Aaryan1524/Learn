@@ -365,3 +365,18 @@ dialog::backdrop { background: var(--backdrop); }
   .source-title { font-size: 22px; line-height: 28px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+
+.numeric-exercise { margin: 24px 0; padding: 20px; border: 1px solid var(--rule); border-radius: 10px; }
+.numeric-exercise fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.numeric-exercise legend { font-weight: 500; padding: 0; margin-bottom: 16px; }
+.numeric-fields { display: flex; gap: 16px; flex-wrap: wrap; }
+.numeric-fields label { display: grid; gap: 6px; flex: 1 1 120px; min-width: 0; font-size: 12px; color: var(--mute); }
+.numeric-fields input { background: var(--card); border: 1px solid var(--rule); border-radius: 5px; padding: 9px 10px; width: 100%; min-width: 0; min-height: 44px; font-variant-numeric: tabular-nums; }
+.numeric-fields input[aria-invalid=true] { border-color: var(--ink); outline: 1px dashed var(--ink); outline-offset: 3px; }
+.source-companion { margin: 16px 0 24px; font-size: 13px; line-height: 22px; }
+.source-companion dt { font-weight: 550; margin-top: 12px; }
+.source-companion dd { margin: 4px 0 0; color: var(--ink-2); }
+.code-walkthrough { font-size: 13px; line-height: 23px; }
+.code-walkthrough li { margin: 12px 0; }
+.figure-index { margin: 20px 0; font-size: 12px; color: var(--mute); }
+.figure-index ul { display: flex; gap: 8px 20px; flex-wrap: wrap; list-style: none; padding: 0; margin: 6px 0 0; }

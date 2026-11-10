@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { EraOverview, EraRows, LessonPage, Pager, SourceEntry } from "@/components/editorial";
 import { ProgressPage } from "@/components/book-shell";
 import { Checkpoint, Question } from "@/components/learning";
+import { SourceCompanion } from "@/components/source-companion";
 import { questions } from "@/lib/questions";
 import { eras, glossary, lessonPath, lessons, sources, type LessonId } from "@/lib/course";
 import type { Metadata } from "next";
@@ -28,9 +29,9 @@ export default async function Page({ params, searchParams }: Props) {
   if (route === "eras/foundations/checkpoint") return <>
     <nav className="crumbs" aria-label="Breadcrumb"><Link href="/eras/foundations">Part 1</Link><span>/</span><span aria-current="page">Checkpoint</span></nav>
     <h1 className="title">Checkpoint <span>· Part 1</span></h1>
-    <p className="statement">One question per lesson. No timer, nothing locked.</p>
+    <p className="statement">Reasoning, calculations, and a self-assessed implementation task. No timer, nothing locked.</p>
     <Checkpoint />
-    <Pager back={{ href: lessonPath("dartmouth"), label: lessons[4].short }} on={{ href: "/eras/symbolic-ai", label: "Part 2: Symbolic AI", small: "Planned" }} />
+    <Pager back={{ href: lessonPath(lessons.at(-1)!.id), label: lessons.at(-1)!.short }} on={{ href: "/eras/symbolic-ai", label: "Part 2: Symbolic AI", small: "Planned" }} />
   </>;
 
   if (route === "eras") return <>
@@ -44,8 +45,8 @@ export default async function Page({ params, searchParams }: Props) {
     <p className="statement">Read what the authors claimed, how they argued, and what they left open.</p>
     <section>
       <h2>Part 1 sources</h2>
-      <div className="source-library">{sources.map(source => <SourceEntry key={source.id} source={source} />)}</div>
-      <p className="small" style={{ marginTop: 12 }}>Links go to original documents or institutional copies; publisher access varies. The McCulloch–Pitts summary is based on the abstract; full-text review is pending. Summaries reviewed 9 November 2026.</p>
+      <div className="source-library">{sources.map(source => <div key={source.id}><SourceEntry source={source} /><SourceCompanion id={source.id} /></div>)}</div>
+      <p className="small" style={{ marginTop: 12 }}>Links go to original documents or institutional copies; publisher access varies. McCulloch–Pitts is a formal historical model, not a biological simulation. Novikoff is a later mathematical reference, outside the era; direct scan access varies. Summaries reviewed 9 November 2026.</p>
     </section>
   </>;
 
@@ -75,7 +76,7 @@ export default async function Page({ params, searchParams }: Props) {
   if (route === "about") return <>
     <h1 className="title">About <span>· why this exists</span></h1>
     <p className="statement">I’m Aaryan. This is where I share what I’m learning about the ideas behind AI, and try to make them easier to understand.</p>
-    <section><h2>The approach</h2><p>AI history is usually told as a list of breakthroughs. This tells it through the questions: what problem people were solving, what the math actually did, and what it left unanswered.</p><p>Each lesson pairs history with a mechanism, a worked example, practice, and the original source.</p></section>
+    <section><h2>The approach</h2><p>AI history is usually told as a list of breakthroughs. This tells it through the questions: what problem people were solving, what the math actually did, and what it left unanswered.</p><p>Each lesson pairs history with a mechanism, a worked example, practice, and the original source. Part 1 now includes bias, learning updates, plain-Python training, linear boundaries, and XOR. The 1936 computation lesson is a prelude to the 1943–1959 era.</p></section>
     <section><h2>Status</h2><p>Part 1 is a first edition. Parts 2–9 are planned. Interactive figures are being built separately; each lesson has a full text version in the meantime.</p><p className="muted">Independent learner review and full accessibility testing are still to come.</p></section>
     <section><h2>Open by design</h2><p>No accounts, no paid access. Progress stays on your device and can be exported or reset. Answers are never uploaded or graded by AI.</p><p>Code and lessons are MIT licensed. The design is inspired by <a href="https://skills.wheresryan.sh/anatomy" target="_blank" rel="noreferrer">Anatomy by Ryan</a>; none of its artwork or code is copied. Type is Ballet for main titles, Inter for reading, and EB Garamond for notes, self-hosted under their font licenses.</p><p><a href="https://github.com/Aaryan1524/Learn" target="_blank" rel="noreferrer">Read the source and contribute</a></p></section>
   </>;

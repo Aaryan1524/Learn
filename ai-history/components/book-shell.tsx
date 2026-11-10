@@ -49,8 +49,8 @@ function Rail({ pathname, progress, active, theme, onTheme, onSearch }: { pathna
     <div className="rail-tools">
       <button onClick={onSearch}>Search <kbd>⌘K</kbd></button>
       <button onClick={onTheme} aria-label={`Theme: ${theme}. Change theme`}>Theme <span>{theme}</span></button>
-      <Link href="/progress" aria-current={here("/progress")}>Progress <span>{progress.completed.length}/5</span></Link>
-      <span className="meter" aria-hidden="true"><span style={{ width: `${progress.completed.length * 20}%` }} /></span>
+      <Link href="/progress" aria-current={here("/progress")}>Progress <span>{progress.completed.length}/{lessons.length}</span></Link>
+      <span className="meter" aria-hidden="true"><span style={{ width: `${progress.completed.length / lessons.length * 100}%` }} /></span>
     </div>
   </div>;
 }
@@ -74,7 +74,7 @@ export function BookShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(PROGRESS_KEY);
-      if (raw) setProgress(parseProgress(JSON.parse(raw)));
+      if (raw) { const parsed = parseProgress(JSON.parse(raw)); setProgress(parsed); localStorage.setItem(PROGRESS_KEY, JSON.stringify(parsed)); }
     } catch { setStorageAvailable(false); }
     const savedTheme = (() => { try { return localStorage.getItem("history-of-ai:theme") || "system"; } catch { return "system"; } })();
     setTheme(savedTheme); setReady(true);
@@ -201,7 +201,7 @@ export function ProgressPage() {
   };
   return <>
     <h1 className="title">Progress <span>· saved on this device</span></h1>
-    <p className="statement">{progress.completed.length} of 5 lessons complete. Checkpoint {progress.checkpointAttempted ? "attempted" : "not attempted"}.</p>
+    <p className="statement">{progress.completed.length} of {lessons.length} lessons complete. Checkpoint {progress.checkpointAttempted ? "attempted" : "not attempted"}.</p>
     {!storageAvailable && <p className="notice">Storage is unavailable, or an old record couldn’t be read. You can still export what’s here.</p>}
     <section>
       <h2>Lessons</h2>
