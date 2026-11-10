@@ -34,3 +34,11 @@ Implemented a 640px prose measure inside a wider canvas, stronger title/body hie
 New verification: all eight Node tests passed, including brief/reference integrity; type checking passed. Sixteen HTTP checks passed for redesigned pages and the intended 404, with unique IDs, valid same-page links, correct figure counts, and the intended reading order. The production build completed successfully.
 
 Browser access returned unavailable. Native browser access was attempted, but the user was actively changing the browser and the action was rejected; no unrelated page was changed. Fresh desktop/phone screenshots, reflow, theme appearance, and browser interaction checks remain unverified for this pass. The previous redesign's browser evidence does not validate these new layout changes. Independent learner and screen-reader review remain pending. Figure art and controls are deferred by the user.
+
+## Ballet titles and proposed Era 1 scope review
+
+Main page titles now use the self-hosted Ballet optical-size variable font at weight 400 and normal style. Main text, metadata, equations, and navigation retain their reading fonts. The font is pinned and its OFL notice is included.
+
+The detailed coverage review is `docs/qa/era-1-coverage.md`. The existing Part 1 does not meet the newly supplied goal of training a perceptron from scratch: explicit bias, learning updates, training, geometric decision boundaries, the Rosenblatt source, the later convergence reference, and expanded exercises remain to be added. Eight figure placeholders do not count as completed interactive teaching. Anatomy remains deferred per the latest user instruction. The current era label and completion counts have not been changed to imply that the proposed expansion is implemented.
+
+Verification for Ballet: TypeScript and the production build passed. The overview and logic lesson returned HTTP 200; the local variable WOFF2 and OFL notice were served successfully. The packaged font exactly matches the authored public asset. Fresh browser visual review remains unavailable, so calligraphic title wrapping and appearance on desktop/phone are not claimed as visually verified.

@@ -25,3 +25,9 @@
 - Give titles, section headings, body, and metadata distinct sizes. Replace the repeated ruled outcomes with a compact learning summary, and group reading depth with prerequisite access.
 - Place eight named figure briefs near the reasoning: a primary mechanism per lesson and a companion in the first three technical lessons. Artwork is explicitly deferred. Follow Anatomy’s framing and object-selection guidance when each is built.
 - Use bibliographic source entries rather than navigation rows, visible active navigation markers, and subdued but readable secondary text. No new animation or image dependency.
+
+## 2026-11-09 — Ballet titles and proposed Era 1 coverage review
+
+- Use the requested Ballet family (optical sizing auto, weight 400, normal style) for main page titles. Serve the optical-size variable font locally from the pinned Fontsource package; retain its full OFL notice. Metadata, body text, mathematical notation, and navigation keep their reading fonts.
+- Review the proposed 1943–1959 scope against the current five lessons in `docs/qa/era-1-coverage.md`. The new goal of independently training a perceptron is not met by the existing fixed-threshold lesson. Record the missing content explicitly rather than changing completion claims or dates.
+- Preserve the user's latest instruction to do Anatomy later. Existing frames remain reserved; this pass does not claim that sliders, live mathematical traces, or perceptron training figures exist.
